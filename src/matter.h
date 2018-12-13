@@ -2,15 +2,15 @@
 #ifndef MATTER
 #define MATTER
 
-#include <R.h>
-#include <Rdefines.h>
-
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 
 #include "utils.h"
 #include "matterDefines.h"
+
+#include <R.h>
+#include <Rinternals.h>
 
 #define within_bounds(x, a, b) ((a) <= (x) && (x) < (b))
 #define out_of_bounds(x, a, b) ((x) < (a) && (b) <= (x))
@@ -99,12 +99,12 @@ class VectorOrDRLE {
 
         VectorOrDRLE(SEXP x)
         {
-            if ( isS4(x) )
+            if ( Rf_isS4(x) )
             {
-                values = DataPtr<RType,SType>(GET_SLOT(x, install("values")));
-                lengths = INTEGER(GET_SLOT(x, install("lengths")));
-                deltas = DataPtr<RType,SType>(GET_SLOT(x, install("deltas")));
-                nruns = LENGTH(GET_SLOT(x, install("values")));
+                values = DataPtr<RType,SType>(R_do_slot(x, Rf_install("values")));
+                lengths = INTEGER(R_do_slot(x, Rf_install("lengths")));
+                deltas = DataPtr<RType,SType>(R_do_slot(x, Rf_install("deltas")));
+                nruns = LENGTH(R_do_slot(x, Rf_install("values")));
                 isDRLE = true;
             }
             else
@@ -156,10 +156,10 @@ class DataSources {
 
         DataSources(SEXP x)
         {
-            _paths = GET_SLOT(x, install("paths"));
-            _filemode = GET_SLOT(x, install("filemode"));
+            _paths = R_do_slot(x, Rf_install("paths"));
+            _filemode = R_do_slot(x, Rf_install("filemode"));
             if ( LENGTH(_paths) == 0 )
-                error("empty 'paths'");
+                Rf_error("empty 'paths'");
             _length = LENGTH(_paths);
             _streams = (FILE **) Calloc(_length, FILE*);
             for ( int i = 0; i < _length; i++ )
@@ -176,12 +176,12 @@ class DataSources {
 
         FILE * require(int source_id) {
             if ( source_id == NA_INTEGER )
-                error("missing 'source_id'");
+                Rf_error("missing 'source_id'");
             if ( _streams[source_id] == NULL ) {
-                const char * filename = CHARACTER_VALUE(STRING_ELT(_paths, source_id));
-                _streams[source_id] = fopen(filename, CHARACTER_VALUE(_filemode));
+                const char * filename = CHAR(Rf_asChar(STRING_ELT(_paths, source_id)));
+                _streams[source_id] = fopen(filename, CHAR(Rf_asChar(_filemode)));
                 if ( _streams[source_id] == NULL )
-                  error("could not open file '%s'", filename);
+                  Rf_error("could not open file '%s'", filename);
             }
             return _streams[source_id];
         }
@@ -216,7 +216,7 @@ class Ops {
     public:
 
         Ops(SEXP x) {
-            SEXP _datamode = GET_SLOT(x, install("datamode"));
+            SEXP _datamode = R_do_slot(x, Rf_install("datamode"));
             if ( LENGTH(_datamode) > 1 )
             {
                 _modes.R_mode = INTEGER(_datamode);
@@ -227,7 +227,7 @@ class Ops {
                 _modes.R_mode = INTEGER(_datamode);
                 _modes.is_list = false;
             }
-            SEXP _x = GET_SLOT(x, install("ops"));
+            SEXP _x = R_do_slot(x, Rf_install("ops"));
             if ( _x != R_NilValue ) {
                 _length = LENGTH(_x);
                 _lhs = Calloc(_length, SEXP);
@@ -241,8 +241,8 @@ class Ops {
                     SEXP _elt = VECTOR_ELT(_x, i);
                     _lhs[i] = VECTOR_ELT(_elt, 0);
                     _rhs[i] = VECTOR_ELT(_elt, 1);
-                    _op[i] = INTEGER_VALUE(VECTOR_ELT(_elt, 2));
-                    _where[i] = INTEGER_VALUE(VECTOR_ELT(_elt, 3));
+                    _op[i] = Rf_asInteger(VECTOR_ELT(_elt, 2));
+                    _where[i] = Rf_asInteger(VECTOR_ELT(_elt, 3));
                     if ( has_lhs(i) )
                         _type[i] = TYPEOF(lhs(i));
                     else if ( has_rhs(i) )
@@ -409,15 +409,15 @@ class Atoms {
 
         Atoms(SEXP x, DataSources & s, Ops & o) : _sources(s), _ops(o)
         {
-            _natoms = INTEGER_VALUE(GET_SLOT(x, install("natoms")));
-            _ngroups = INTEGER_VALUE(GET_SLOT(x, install("ngroups")));
-            _group_id = new VectorOrDRLE<int,INTSXP>(GET_SLOT(x, install("group_id")));
-            _source_id = new VectorOrDRLE<int,INTSXP>(GET_SLOT(x, install("source_id")));
-            _datamode = new VectorOrDRLE<int,INTSXP>(GET_SLOT(x, install("datamode")));
-            _offset = new VectorOrDRLE<double,REALSXP>(GET_SLOT(x, install("offset")));
-            _extent = new VectorOrDRLE<double,REALSXP>(GET_SLOT(x, install("extent")));
-            _index_offset = new VectorOrDRLE<double,REALSXP>(GET_SLOT(x, install("index_offset")));
-            _index_extent = new VectorOrDRLE<double,REALSXP>(GET_SLOT(x, install("index_extent")));
+            _natoms = Rf_asInteger(R_do_slot(x, Rf_install("natoms")));
+            _ngroups = Rf_asInteger(R_do_slot(x, Rf_install("ngroups")));
+            _group_id = new VectorOrDRLE<int,INTSXP>(R_do_slot(x, Rf_install("group_id")));
+            _source_id = new VectorOrDRLE<int,INTSXP>(R_do_slot(x, Rf_install("source_id")));
+            _datamode = new VectorOrDRLE<int,INTSXP>(R_do_slot(x, Rf_install("datamode")));
+            _offset = new VectorOrDRLE<double,REALSXP>(R_do_slot(x, Rf_install("offset")));
+            _extent = new VectorOrDRLE<double,REALSXP>(R_do_slot(x, Rf_install("extent")));
+            _index_offset = new VectorOrDRLE<double,REALSXP>(R_do_slot(x, Rf_install("index_offset")));
+            _index_extent = new VectorOrDRLE<double,REALSXP>(R_do_slot(x, Rf_install("index_extent")));
             set_group(0);
         }
 
@@ -457,13 +457,13 @@ class Atoms {
                 _group_length = j - _group_offset;
             }
             else
-                error("subscript out of bounds");
+                Rf_error("subscript out of bounds");
         }
 
         int source_id(int i) {
             int retId = (*_source_id)[i + group_offset()] - 1;
             if ( retId == NA_INTEGER )
-                error("missing 'source_id'");
+                Rf_error("missing 'source_id'");
             return retId;
         }
 
@@ -521,7 +521,7 @@ class Atoms {
                     elt_offset = sizeof(double) * (offset - index_offset(i));
                     break;
                 default:
-                    error("unsupported datamode");
+                    Rf_error("unsupported datamode");
             }
             byte_offset = this->offset(i) + elt_offset;
             return byte_offset;
@@ -531,7 +531,7 @@ class Atoms {
             for ( int retIdx = 0; retIdx < group_length(); retIdx++ )
                 if ( within_bounds(offset, index_offset(retIdx), index_extent(retIdx)) )
                     return retIdx;
-            error("subscript not found in any atom");
+            Rf_error("subscript not found in any atom");
         }
 
         template<typename CType, typename RType, typename IType>
@@ -596,7 +596,7 @@ class Atoms {
             }
             Free(tmp);
             if ( numRead != count)
-                error("failed to read data elements");
+                Rf_error("failed to read data elements");
             return numRead;
         }
 
@@ -604,7 +604,7 @@ class Atoms {
         index_t write_atom(RType * ptr, int which, index_t offset, index_t count, size_t skip = 1) {
             index_t numWrote;
             if ( _ops.length() > 0 )
-                error("assignment not supported with delayed operations");
+                Rf_error("assignment not supported with delayed operations");
             FILE * stream = _sources.require(source_id(which));
             FSEEK(stream, byte_offset(which, offset), SEEK_SET);
             CType * tmp = (CType *) Calloc(count, CType);
@@ -615,7 +615,7 @@ class Atoms {
             numWrote = fwrite(tmp, sizeof(CType), count, stream);
             Free(tmp);
             if ( numWrote != count)
-                error("failed to write data elements");
+                Rf_error("failed to write data elements");
             return numWrote;
         }
 
@@ -626,7 +626,7 @@ class Atoms {
             numRead = 0;
             totLength = index_extent(group_length() - 1);
             if ( offset < 0 || offset + count > totLength )
-                error("subscript out of bounds");
+                Rf_error("subscript out of bounds");
             while ( numRead < count && offset < totLength ) {
                 int i = find_atom(offset);
                 index_t maxReadable = index_extent(i) - offset;
@@ -663,7 +663,7 @@ class Atoms {
                         n = read_atom<double,RType>(ptr, i, offset, n, skip);
                         break;
                     default:
-                        error("unsupported datamode");
+                        Rf_error("unsupported datamode");
                 }
                 toRead -= n;
                 numRead += n;
@@ -680,7 +680,7 @@ class Atoms {
             numWrote = 0;
             totLength = index_extent(group_length() - 1);
             if ( offset < 0 || offset + count > totLength )
-                error("subscript out of bounds");
+                Rf_error("subscript out of bounds");
             while ( numWrote < count && offset < totLength ) {
                 int i = find_atom(offset);
                 index_t maxWritable = index_extent(i) - offset;
@@ -717,7 +717,7 @@ class Atoms {
                         n = write_atom<double,RType>(ptr, i, offset, n, skip);
                         break;
                     default:
-                        error("unsupported datamode");
+                        Rf_error("unsupported datamode");
                 }
                 toWrite -= n;
                 numWrote += n;
@@ -807,12 +807,12 @@ class Matter
 
         Matter(SEXP x) : _sources(x), _ops(x)
         {
-            _data = new Atoms(GET_SLOT(x, install("data")), _sources, _ops);
-            _datamode = INTEGER(GET_SLOT(x, install("datamode")));
-            _chunksize = INTEGER_VALUE(GET_SLOT(x, install("chunksize")));
-            _length = static_cast<index_t>(NUMERIC_VALUE(GET_SLOT(x, install("length"))));
-            _dim = GET_SLOT(x, install("dim"));
-            const char * classname = CHARACTER_VALUE(GET_CLASS(x));
+            _data = new Atoms(R_do_slot(x, Rf_install("data")), _sources, _ops);
+            _datamode = INTEGER(R_do_slot(x, Rf_install("datamode")));
+            _chunksize = Rf_asInteger(R_do_slot(x, Rf_install("chunksize")));
+            _length = static_cast<index_t>(Rf_asReal(R_do_slot(x, Rf_install("length"))));
+            _dim = R_do_slot(x, Rf_install("dim"));
+            const char * classname = CHAR(Rf_asChar(Rf_getAttrib(x, R_ClassSymbol)));
             if ( strcmp(classname, "matter_list") == 0 )
                 _S4class = MATTER_LIST;
             else if ( strcmp(classname, "matter_matc") == 0 )

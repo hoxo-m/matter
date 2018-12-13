@@ -1,7 +1,7 @@
 
-#include <cmath>
-
 #include "matter.h"
+
+#include <cmath>
 
 //// Low-level utility functions
 //-------------------------------
@@ -10,9 +10,9 @@ MATTER_OPTIONS matter_options;
 
 void set_matter_options() {
     SEXP e, result;
-    PROTECT(e = lang2(install("getOption"), mkString("matter.cast.warning")));
-    PROTECT(result = eval(e, R_GlobalEnv));
-    matter_options.cast_warning = LOGICAL_VALUE(result);
+    PROTECT(e = Rf_lang2(Rf_install("getOption"), Rf_mkString("matter.cast.warning")));
+    PROTECT(result = Rf_eval(e, R_GlobalEnv));
+    matter_options.cast_warning = Rf_asLogical(result);
     UNPROTECT(2);
 }
 
@@ -84,11 +84,11 @@ int coerce_cast<double,int>(double x) {
     if ( x < R_INT_MIN || x > R_INT_MAX || !R_FINITE(x) )
     {
         if ( !ISNA(x) )
-            warning("value is out of range for type 'int', element will be set to NA");
+            Rf_warning("value is out of range for type 'int', element will be set to NA");
         return NA_INTEGER;
     }
     if ( matter_options.cast_warning )
-        warning("casting from 'double' to 'int', precision may be lost");
+        Rf_warning("casting from 'double' to 'int', precision may be lost");
     return static_cast<int>(x);
 }
 
@@ -121,7 +121,7 @@ char coerce_cast<int,char>(int x) {
     if ( x < R_CHAR_MIN || x > R_CHAR_MAX || x == NA_INTEGER )
     {
         if ( x != NA_INTEGER )
-            warning("value is out of range for type 'char', element will be set to NA");
+            Rf_warning("value is out of range for type 'char', element will be set to NA");
         return NA_CHAR;
     }
     return static_cast<char>(x);
@@ -132,11 +132,11 @@ char coerce_cast<double,char>(double x) {
     if ( x < R_CHAR_MIN || x > R_CHAR_MAX || !R_FINITE(x) )
     {
         if ( !ISNA(x) )
-            warning("value is out of range for type 'char', element will be set to NA");
+            Rf_warning("value is out of range for type 'char', element will be set to NA");
         return NA_CHAR;
     }
     if ( matter_options.cast_warning )
-        warning("casting from 'double' to 'char', precision may be lost");
+        Rf_warning("casting from 'double' to 'char', precision may be lost");
     return static_cast<char>(x);
 }
 
@@ -147,9 +147,9 @@ unsigned char coerce_cast<int,unsigned char>(int x) {
     if ( x < 0 || x > R_UCHAR_MAX || x == NA_INTEGER )
     {
         if ( x == NA_INTEGER )
-            warning("NAs not supported for type 'unsigned char', element will be set to 0");
+            Rf_warning("NAs not supported for type 'unsigned char', element will be set to 0");
         else
-            warning("value is out of range for type 'unsigned char', element will be set to 0");
+            Rf_warning("value is out of range for type 'unsigned char', element will be set to 0");
         return 0;
     }
     return static_cast<unsigned char>(x);
@@ -160,13 +160,13 @@ unsigned char coerce_cast<double,unsigned char>(double x) {
     if ( x < 0 || x > R_UCHAR_MAX || !R_FINITE(x) )
     {
         if ( ISNA(x) )
-            warning("NAs not supported for type 'unsigned char', element will be set to 0");
+            Rf_warning("NAs not supported for type 'unsigned char', element will be set to 0");
         else
-            warning("value is out of range for type 'unsigned char', element will be set to 0");
+            Rf_warning("value is out of range for type 'unsigned char', element will be set to 0");
         return 0;
     }
     if ( matter_options.cast_warning )
-        warning("casting from 'double' to 'unsigned char', precision may be lost");
+        Rf_warning("casting from 'double' to 'unsigned char', precision may be lost");
     return static_cast<unsigned char>(x);
 }
 
@@ -182,7 +182,7 @@ short coerce_cast<int,short>(int x) {
     if ( x < R_SHORT_MIN || x > R_SHORT_MAX || x == NA_INTEGER )
     {
         if ( x != NA_INTEGER )
-            warning("value is out of range for type 'short', element will be set to NA");
+            Rf_warning("value is out of range for type 'short', element will be set to NA");
         return NA_SHORT;
     }
     return static_cast<short>(x);
@@ -193,11 +193,11 @@ short coerce_cast<double,short>(double x) {
     if ( x < R_SHORT_MIN || x > R_SHORT_MAX || !R_FINITE(x) )
     {
         if ( !ISNA(x) )
-            warning("value is out of range for type 'short', element will be set to NA");
+            Rf_warning("value is out of range for type 'short', element will be set to NA");
         return NA_SHORT;
     }
     if ( matter_options.cast_warning )
-        warning("casting from 'double' to 'short', precision may be lost");
+        Rf_warning("casting from 'double' to 'short', precision may be lost");
     return static_cast<short>(x);
 }
 
@@ -214,9 +214,9 @@ unsigned short coerce_cast<int,unsigned short>(int x) {
     if ( x < 0 || x > R_USHORT_MAX || x == NA_INTEGER )
     {
         if ( x == NA_INTEGER )
-            warning("NAs not supported for type 'unsigned short', element will be set to 0");
+            Rf_warning("NAs not supported for type 'unsigned short', element will be set to 0");
         else
-            warning("value is out of range for type 'unsigned short', element will be set to 0");
+            Rf_warning("value is out of range for type 'unsigned short', element will be set to 0");
         return 0;
     }
     return static_cast<unsigned short>(x);
@@ -227,13 +227,13 @@ unsigned short coerce_cast<double,unsigned short>(double x) {
     if ( x < 0 || x > R_USHORT_MAX || !R_FINITE(x) )
     {
         if ( ISNA(x) )
-            warning("NAs not supported for type 'unsigned short', element will be set to 0");
+            Rf_warning("NAs not supported for type 'unsigned short', element will be set to 0");
         else
-            warning("value is out of range for type 'unsigned short', element will be set to 0");
+            Rf_warning("value is out of range for type 'unsigned short', element will be set to 0");
         return 0;
     }
     if ( matter_options.cast_warning )
-        warning("casting from 'double' to 'unsigned short', precision may be lost");
+        Rf_warning("casting from 'double' to 'unsigned short', precision may be lost");
     return static_cast<unsigned short>(x);
 }
 
@@ -250,9 +250,9 @@ unsigned int coerce_cast<int,unsigned int>(int x) {
     if ( x < 0 || x == NA_INTEGER )
     {
         if ( x == NA_INTEGER )
-            warning("NAs not supported for type 'unsigned int', element will be set to 0");
+            Rf_warning("NAs not supported for type 'unsigned int', element will be set to 0");
         else
-            warning("value is out of range for type 'unsigned int', element will be set to 0");
+            Rf_warning("value is out of range for type 'unsigned int', element will be set to 0");
         return 0;
     }
     return static_cast<int>(x);
@@ -263,13 +263,13 @@ unsigned int coerce_cast<double,unsigned int>(double x) {
     if ( x < 0 || x > R_UINT_MAX || !R_FINITE(x) )
     {
         if ( ISNA(x) )
-            warning("NAs not supported for type 'unsigned int', element will be set to 0");
+            Rf_warning("NAs not supported for type 'unsigned int', element will be set to 0");
         else
-            warning("value is out of range for type 'unsigned int', element will be set to 0");
+            Rf_warning("value is out of range for type 'unsigned int', element will be set to 0");
         return 0;
     }
     if ( matter_options.cast_warning )
-        warning("casting from 'double' to 'unsigned int', precision may be lost");
+        Rf_warning("casting from 'double' to 'unsigned int', precision may be lost");
     return static_cast<unsigned int>(x);
 }
 
@@ -293,11 +293,11 @@ long coerce_cast<double,long>(double x) {
     if ( !R_FINITE(x) )
     {
         if ( ISNA(x) )
-            warning("value is out of range for type 'long', element will be set to NA");
+            Rf_warning("value is out of range for type 'long', element will be set to NA");
         return NA_LONG;
     }
     if ( matter_options.cast_warning )
-        warning("casting from 'double' to 'long', precision may be lost");
+        Rf_warning("casting from 'double' to 'long', precision may be lost");
     return static_cast<long>(x);
 }
 
@@ -313,9 +313,9 @@ unsigned long coerce_cast<int,unsigned long>(int x) {
     if ( x < 0 || x == NA_INTEGER )
     {
         if ( x == NA_INTEGER )
-            warning("NAs not supported for type 'unsigned long', element will be set to 0");
+            Rf_warning("NAs not supported for type 'unsigned long', element will be set to 0");
         else
-            warning("value is out of range for type 'unsigned long', element will be set to 0");
+            Rf_warning("value is out of range for type 'unsigned long', element will be set to 0");
         return 0;
     }
     else
@@ -327,13 +327,13 @@ unsigned long coerce_cast<double,unsigned long>(double x) {
     if ( !R_FINITE(x) )
     {
         if ( ISNA(x) )
-            warning("NAs not supported for type 'unsigned long', element will be set to 0");
+            Rf_warning("NAs not supported for type 'unsigned long', element will be set to 0");
         else
-            warning("value is out of range for type 'long', element will be set to 0");
+            Rf_warning("value is out of range for type 'long', element will be set to 0");
         return 0;
     }
     if ( matter_options.cast_warning )
-        warning("casting from 'double' to 'unsigned long', precision may be lost");
+        Rf_warning("casting from 'double' to 'unsigned long', precision may be lost");
     return static_cast<unsigned long>(x);
 }
 
@@ -357,11 +357,11 @@ float coerce_cast<double,float>(double x) {
     if ( !R_FINITE(x) )
     {
         if ( !ISNA(x) )
-            warning("value is out of range for type 'float' and will be set to NA");
+            Rf_warning("value is out of range for type 'float' and will be set to NA");
         return static_cast<float>(NA_REAL);
     }
     if ( matter_options.cast_warning )
-        warning("casting from 'double' to 'float', precision may be lost");
+        Rf_warning("casting from 'double' to 'float', precision may be lost");
     return static_cast<float>(x);
 }
 
@@ -374,9 +374,9 @@ Rbyte coerce_cast<char,Rbyte>(char x) {
     if ( x < 0 || x == NA_CHAR )
     {
         if ( x == NA_CHAR )
-            warning("value is out of range for type 'unsigned char', element will be set to 0");
+            Rf_warning("value is out of range for type 'unsigned char', element will be set to 0");
         else
-            warning("value is out of range for type 'unsigned char', element will be set to 0");
+            Rf_warning("value is out of range for type 'unsigned char', element will be set to 0");
         return 0;
     }
     else
@@ -388,9 +388,9 @@ Rbyte coerce_cast<short,Rbyte>(short x) {
     if ( x < 0 || x > R_UCHAR_MAX || x == NA_SHORT )
     {
         if ( x == NA_CHAR )
-            warning("value is out of range for type 'unsigned char', element will be set to 0");
+            Rf_warning("value is out of range for type 'unsigned char', element will be set to 0");
         else
-            warning("value is out of range for type 'unsigned char', element will be set to 0");
+            Rf_warning("value is out of range for type 'unsigned char', element will be set to 0");
         return 0;
     }
     else
@@ -401,7 +401,7 @@ template<>
 Rbyte coerce_cast<unsigned short,Rbyte>(unsigned short x) {
     if ( x > R_UCHAR_MAX )
     {
-        warning("value is out of range for type 'unsigned char', element will be set to 0");
+        Rf_warning("value is out of range for type 'unsigned char', element will be set to 0");
         return 0;   
     }
     return static_cast<Rbyte>(x);
@@ -411,7 +411,7 @@ template<>
 Rbyte coerce_cast<unsigned int,Rbyte>(unsigned int x) {
     if ( x > R_UCHAR_MAX )
     {
-        warning("value is out of range for type 'unsigned char', element will be set to 0");
+        Rf_warning("value is out of range for type 'unsigned char', element will be set to 0");
         return 0;
     }
     return static_cast<Rbyte>(x);
@@ -422,9 +422,9 @@ Rbyte coerce_cast<long,Rbyte>(long x) {
     if ( x < 0 || x > R_UCHAR_MAX || x == NA_LONG )
     {
         if ( x == NA_LONG )
-            warning("value is out of range for type 'unsigned char', element will be set to 0");
+            Rf_warning("value is out of range for type 'unsigned char', element will be set to 0");
         else
-            warning("value is out of range for type 'unsigned char', element will be set to 0");
+            Rf_warning("value is out of range for type 'unsigned char', element will be set to 0");
         return 0;
     }
     else
@@ -435,7 +435,7 @@ template<>
 Rbyte coerce_cast<unsigned long,Rbyte>(unsigned long x) {
     if ( x > R_UCHAR_MAX )
     {
-        warning("value is out of range for type 'unsigned char', element will be set to 0");
+        Rf_warning("value is out of range for type 'unsigned char', element will be set to 0");
         return 0;
     }
     return static_cast<Rbyte>(x);
@@ -445,13 +445,13 @@ template<>
 Rbyte coerce_cast<float,Rbyte>(float x) {
     if ( x < 0 || x > R_UCHAR_MAX || std::isnan(x) )
     {
-        warning("value is out of range for type 'unsigned char', element will be set to 0");
+        Rf_warning("value is out of range for type 'unsigned char', element will be set to 0");
         return 0;
     }
     else
     {
         if ( matter_options.cast_warning )
-            warning("casting from 'float' to 'unsigned char', precision may be lost");
+            Rf_warning("casting from 'float' to 'unsigned char', precision may be lost");
         return static_cast<Rbyte>(x);
     }
 }
@@ -461,70 +461,70 @@ Rbyte coerce_cast<float,Rbyte>(float x) {
 template<>
 bool coerce_cast<char,bool>(char x) {
     if ( x != 0 && x != 1 )
-        warning("value is out of range for type 'bool', element will be set to FALSE");
+        Rf_warning("value is out of range for type 'bool', element will be set to FALSE");
     return static_cast<bool>(x);
 }
 
 template<>
 bool coerce_cast<unsigned char,bool>(unsigned char x) {
     if ( x != 0 && x != 1 )
-        warning("value is out of range for type 'bool', element will be set to FALSE");
+        Rf_warning("value is out of range for type 'bool', element will be set to FALSE");
     return static_cast<bool>(x);
 }
 
 template<>
 bool coerce_cast<short,bool>(short x) {
     if ( x != 0 && x != 1 )
-        warning("value is out of range for type 'bool', element will be set to FALSE");
+        Rf_warning("value is out of range for type 'bool', element will be set to FALSE");
     return static_cast<bool>(x);
 }
 
 template<>
 bool coerce_cast<unsigned short,bool>(unsigned short x) {
     if ( x != 0 && x != 1 )
-        warning("value is out of range for type 'bool', element will be set to FALSE");
+        Rf_warning("value is out of range for type 'bool', element will be set to FALSE");
     return static_cast<bool>(x);
 }
 
 template<>
 bool coerce_cast<int,bool>(int x) {
     if ( x != 0 && x != 1 )
-        warning("value is out of range for type 'bool', element will be set to FALSE");
+        Rf_warning("value is out of range for type 'bool', element will be set to FALSE");
     return static_cast<bool>(x);
 }
 
 template<>
 bool coerce_cast<unsigned int,bool>(unsigned int x) {
     if ( x != 0 && x != 1 )
-        warning("value is out of range for type 'bool', element will be set to FALSE");
+        Rf_warning("value is out of range for type 'bool', element will be set to FALSE");
     return static_cast<bool>(x);
 }
 
 template<>
 bool coerce_cast<long,bool>(long x) {
     if ( x != 0 && x != 1 )
-        warning("value is out of range for type 'bool', element will be set to FALSE");
+        Rf_warning("value is out of range for type 'bool', element will be set to FALSE");
     return static_cast<bool>(x);
 }
 
 template<>
 bool coerce_cast<unsigned long,bool>(unsigned long x) {
     if ( x != 0 && x != 1 )
-        warning("value is out of range for type 'bool', element will be set to FALSE");
+        Rf_warning("value is out of range for type 'bool', element will be set to FALSE");
     return static_cast<bool>(x);
 }
 
 template<>
 bool coerce_cast<float,bool>(float x) {
     if ( x != 0 && x != 1 )
-        warning("value is out of range for type 'bool', element will be set to FALSE");
+        Rf_warning("value is out of range for type 'bool', element will be set to FALSE");
     return static_cast<bool>(x);
 }
 
 template<>
 bool coerce_cast<double,bool>(double x) {
     if ( x != 0 && x != 1 )
-        warning("value is out of range for type 'bool', element will be set to FALSE");
+        Rf_warning("value is out of range for type 'bool', element will be set to FALSE");
     return static_cast<bool>(x);
 }
 
@@ -561,7 +561,7 @@ template<>
 int coerce_cast<unsigned int,int>(unsigned int x) {
     if ( x > R_INT_MAX )
     {
-        warning("value is out of range for type 'int', element will be set to NA");
+        Rf_warning("value is out of range for type 'int', element will be set to NA");
         return NA_INTEGER;
     }
     return static_cast<int>(x);
@@ -572,7 +572,7 @@ int coerce_cast<long,int>(long x) {
     if ( x < R_INT_MIN || x > R_INT_MAX || x == NA_LONG )
     {
         if ( x != NA_LONG )
-            warning("value is out of range for type 'int', element will be set to NA");
+            Rf_warning("value is out of range for type 'int', element will be set to NA");
         return NA_INTEGER;
     }
     if ( x == NA_LONG )
@@ -585,7 +585,7 @@ template<>
 int coerce_cast<unsigned long,int>(unsigned long x) {
     if ( x > R_INT_MAX )
     {
-        warning("value is out of range for type 'int', element will be set to NA");
+        Rf_warning("value is out of range for type 'int', element will be set to NA");
         return NA_INTEGER;
     }
     return static_cast<int>(x);
@@ -594,7 +594,7 @@ int coerce_cast<unsigned long,int>(unsigned long x) {
 template<>
 int coerce_cast<float,int>(float x) {
     if ( matter_options.cast_warning )
-        warning("casting from 'float' to 'int', precision may be lost");
+        Rf_warning("casting from 'float' to 'int', precision may be lost");
     if ( std::isnan(x) )
         return NA_INTEGER;
     else
@@ -659,7 +659,7 @@ template<typename T>
 SEXP group_means(T * x, int * group, int ngroup, int length, double init)
 {
     SEXP ret;
-    PROTECT(ret = NEW_NUMERIC(ngroup));
+    PROTECT(ret = Rf_allocVector(REALSXP, ngroup));
     double * pRet = REAL(ret);
     int * n = (int *) Calloc(ngroup, int);
     for ( int g_i = 0; g_i < ngroup; g_i++ ) {
@@ -669,7 +669,7 @@ SEXP group_means(T * x, int * group, int ngroup, int length, double init)
     for ( int i = 0; i < length; i++ ) {
         if ( group[i] != NA_INTEGER ) {
             if ( group[i] <= 0 || group[i] > ngroup )
-                error("unexpected group id");
+                Rf_error("unexpected group id");
             n[group[i] - 1]++;
             pRet[group[i] - 1] += x[i];
         }
@@ -689,7 +689,7 @@ template<typename T>
 SEXP group_sums(T * x, int * group, int ngroup, int length, double init)
 {
     SEXP ret;
-    PROTECT(ret = NEW_NUMERIC(ngroup));
+    PROTECT(ret = Rf_allocVector(REALSXP, ngroup));
     double * pRet = REAL(ret);
     int * n = (int *) Calloc(ngroup, int);
     for ( int g_i = 0; g_i < ngroup; g_i++ ) {
@@ -699,7 +699,7 @@ SEXP group_sums(T * x, int * group, int ngroup, int length, double init)
     for ( int i = 0; i < length; i++ ) {
         if ( group[i] != NA_INTEGER ) {
             if ( group[i] <= 0 || group[i] > ngroup )
-                error("unexpected group id");
+                Rf_error("unexpected group id");
             n[group[i] - 1]++;
             pRet[group[i] - 1] += x[i];
         }
@@ -716,7 +716,7 @@ template<typename T>
 SEXP group_mins(T * x, int * group, int ngroup, int length, double init)
 {
     SEXP ret;
-    PROTECT(ret = NEW_NUMERIC(ngroup));
+    PROTECT(ret = Rf_allocVector(REALSXP, ngroup));
     double * pRet = REAL(ret);
     int * n = (int *) Calloc(ngroup, int);
     for ( int g_i = 0; g_i < ngroup; g_i++ ) {
@@ -726,7 +726,7 @@ SEXP group_mins(T * x, int * group, int ngroup, int length, double init)
     for ( int i = 0; i < length; i++ ) {
         if ( group[i] != NA_INTEGER ) {
             if ( group[i] <= 0 || group[i] > ngroup )
-                error("unexpected group id");
+                Rf_error("unexpected group id");
             n[group[i] - 1]++;
             if ( x[i] < pRet[group[i] - 1] )
                 pRet[group[i] - 1] = x[i];
@@ -744,7 +744,7 @@ template<typename T>
 SEXP group_maxs(T * x, int * group, int ngroup, int length, double init)
 {
     SEXP ret;
-    PROTECT(ret = NEW_NUMERIC(ngroup));
+    PROTECT(ret = Rf_allocVector(REALSXP, ngroup));
     double * pRet = REAL(ret);
     int * n = (int *) Calloc(ngroup, int);
     for ( int g_i = 0; g_i < ngroup; g_i++ ) {
@@ -754,7 +754,7 @@ SEXP group_maxs(T * x, int * group, int ngroup, int length, double init)
     for ( int i = 0; i < length; i++ ) {
         if ( group[i] != NA_INTEGER ) {
             if ( group[i] <= 0 || group[i] > ngroup )
-                error("unexpected group id");
+                Rf_error("unexpected group id");
             n[group[i] - 1]++;
             if ( x[i] > pRet[group[i] - 1] )
                 pRet[group[i] - 1] = x[i];
@@ -914,9 +914,9 @@ template<>
 SEXP makeDRLE<int>(SEXP x, SEXP nruns) {
     SEXP retVals, retLengths, retDeltas;
     int * pX, * pRetVals, * pRetLengths, * pRetDeltas;
-    PROTECT(retVals = NEW_INTEGER(INTEGER_VALUE(nruns)));
-    PROTECT(retLengths = NEW_INTEGER(INTEGER_VALUE(nruns)));
-    PROTECT(retDeltas = NEW_INTEGER(INTEGER_VALUE(nruns)));
+    PROTECT(retVals = Rf_allocVector(INTSXP, Rf_asInteger(nruns)));
+    PROTECT(retLengths = Rf_allocVector(INTSXP, Rf_asInteger(nruns)));
+    PROTECT(retDeltas = Rf_allocVector(INTSXP, Rf_asInteger(nruns)));
     pX = INTEGER(x);
     pRetVals = INTEGER(retVals);
     pRetLengths = INTEGER(retLengths);
@@ -959,11 +959,11 @@ SEXP makeDRLE<int>(SEXP x, SEXP nruns) {
         i += length1;
     }
     SEXP classDef, retObj;
-    PROTECT(classDef = MAKE_CLASS("drle"));
-    PROTECT(retObj = NEW_OBJECT(classDef));
-    SET_SLOT(retObj, install("values"), retVals);
-    SET_SLOT(retObj, install("lengths"), retLengths);
-    SET_SLOT(retObj, install("deltas"), retDeltas);
+    PROTECT(classDef = R_do_MAKE_CLASS("drle"));
+    PROTECT(retObj = R_do_new_object(classDef));
+    R_do_slot_assign(retObj, Rf_install("values"), retVals);
+    R_do_slot_assign(retObj, Rf_install("lengths"), retLengths);
+    R_do_slot_assign(retObj, Rf_install("deltas"), retDeltas);
     UNPROTECT(5);
     return retObj;
 }
@@ -973,9 +973,9 @@ SEXP makeDRLE<double>(SEXP x, SEXP nruns) {
     SEXP retVals, retLengths, retDeltas;
     double * pX, * pRetVals, * pRetDeltas;
     int * pRetLengths;
-    PROTECT(retVals = NEW_NUMERIC(INTEGER_VALUE(nruns)));
-    PROTECT(retLengths = NEW_INTEGER(INTEGER_VALUE(nruns)));
-    PROTECT(retDeltas = NEW_NUMERIC(INTEGER_VALUE(nruns)));
+    PROTECT(retVals = Rf_allocVector(REALSXP, Rf_asInteger(nruns)));
+    PROTECT(retLengths = Rf_allocVector(INTSXP, Rf_asInteger(nruns)));
+    PROTECT(retDeltas = Rf_allocVector(REALSXP, Rf_asInteger(nruns)));
     pX = REAL(x);
     pRetVals = REAL(retVals);
     pRetLengths = INTEGER(retLengths);
@@ -1019,11 +1019,11 @@ SEXP makeDRLE<double>(SEXP x, SEXP nruns) {
         i += length1;
     }
     SEXP classDef, retObj;
-    PROTECT(classDef = MAKE_CLASS("drle"));
-    PROTECT(retObj = NEW_OBJECT(classDef));
-    SET_SLOT(retObj, install("values"), retVals);
-    SET_SLOT(retObj, install("lengths"), retLengths);
-    SET_SLOT(retObj, install("deltas"), retDeltas);
+    PROTECT(classDef = R_do_MAKE_CLASS("drle"));
+    PROTECT(retObj = R_do_new_object(classDef));
+    R_do_slot_assign(retObj, Rf_install("values"), retVals);
+    R_do_slot_assign(retObj, Rf_install("lengths"), retLengths);
+    R_do_slot_assign(retObj, Rf_install("deltas"), retDeltas);
     UNPROTECT(5);
     return retObj;
 }
@@ -1032,7 +1032,7 @@ template<typename RType, int SType>
 SEXP VectorOrDRLE<RType,SType> :: readVector() {
     SEXP retVec;
     int nout = length();
-    PROTECT(retVec = allocVector(SType, nout));
+    PROTECT(retVec = Rf_allocVector(SType, nout));
     RType * pRetVec = DataPtr<RType,SType>(retVec);
     if ( isDRLE ) {
         int cum_index = 0;
@@ -1052,7 +1052,7 @@ SEXP VectorOrDRLE<RType,SType> :: readVector() {
 template<typename RType, int SType>
 SEXP VectorOrDRLE<RType,SType> :: readVectorElements(SEXP i) {
     SEXP retVec;
-    PROTECT(retVec = allocVector(SType, LENGTH(i)));
+    PROTECT(retVec = Rf_allocVector(SType, LENGTH(i)));
     RType * pRetVec = DataPtr<RType,SType>(retVec);
     int * pIndex = INTEGER(i);
     for ( int k = 0; k < LENGTH(i); k++ )
@@ -1127,12 +1127,12 @@ int VectorOrDRLE<double,REALSXP> :: find(double value) {
 template<typename RType, int SType>
 RType VectorOrDRLE<RType,SType> :: operator[](int i) {
     if ( i < 0 )
-        error("subscript out of bounds");
+        Rf_error("subscript out of bounds");
     if ( !isDRLE ) {
         if ( i < nruns )
             return values[i];
         else
-            error("subscript out of bounds");
+            Rf_error("subscript out of bounds");
     }
     if ( i >= ref_index )
     {
@@ -1161,7 +1161,7 @@ RType VectorOrDRLE<RType,SType> :: operator[](int i) {
         }
     }
     if ( i >= ref_index )
-        error("subscript out of bounds");
+        Rf_error("subscript out of bounds");
     return DataNA<RType>();
 }
 
@@ -3039,7 +3039,7 @@ void Ops :: do_ops(T * x, Atoms * atm, index_t offset, index_t count, size_t ski
                         add<T,T>(x, y, i, atm, 0, count, skip);
                         break;
                     default:
-                        error("non-numeric argument to binary operator");
+                        Rf_error("non-numeric argument to binary operator");
                 }
                 break;
             case OP_SUB:
@@ -3056,7 +3056,7 @@ void Ops :: do_ops(T * x, Atoms * atm, index_t offset, index_t count, size_t ski
                         sub<T,T>(x, y, i, atm, 0, count, skip);
                         break;
                     default:
-                        error("non-numeric argument to binary operator");
+                        Rf_error("non-numeric argument to binary operator");
                 }
                 break;
             case OP_MUL:
@@ -3073,7 +3073,7 @@ void Ops :: do_ops(T * x, Atoms * atm, index_t offset, index_t count, size_t ski
                         mul<T,T>(x, y, i, atm, 0, count, skip);
                         break;
                     default:
-                        error("non-numeric argument to binary operator");
+                        Rf_error("non-numeric argument to binary operator");
                 }
                 break;
             case OP_DIV:
@@ -3090,7 +3090,7 @@ void Ops :: do_ops(T * x, Atoms * atm, index_t offset, index_t count, size_t ski
                         div<T,T>(x, y, i, atm, 0, count, skip);
                         break;
                     default:
-                        error("non-numeric argument to binary operator");
+                        Rf_error("non-numeric argument to binary operator");
                 }
                 break;
             case OP_EXP:
@@ -3111,7 +3111,7 @@ void Ops :: do_ops(T * x, Atoms * atm, index_t offset, index_t count, size_t ski
                         exp<T,T>(x, y, i, atm, 0, count, skip);
                         break;
                     default:
-                        error("non-numeric argument to binary operator");
+                        Rf_error("non-numeric argument to binary operator");
                 }
                 break;
             // Compare
@@ -3133,7 +3133,7 @@ void Ops :: do_ops(T * x, Atoms * atm, index_t offset, index_t count, size_t ski
                         eq<T,T>(x, y, i, atm, 0, count, skip);
                         break;
                     default:
-                        error("non-numeric argument to binary operator");
+                        Rf_error("non-numeric argument to binary operator");
                 }
                 break;
             case OP_NE:
@@ -3154,7 +3154,7 @@ void Ops :: do_ops(T * x, Atoms * atm, index_t offset, index_t count, size_t ski
                         ne<T,T>(x, y, i, atm, 0, count, skip);
                         break;
                     default:
-                        error("non-numeric argument to binary operator");
+                        Rf_error("non-numeric argument to binary operator");
                 }
                 break;
             case OP_GT:
@@ -3175,7 +3175,7 @@ void Ops :: do_ops(T * x, Atoms * atm, index_t offset, index_t count, size_t ski
                         gt<T,T>(x, y, i, atm, 0, count, skip);
                         break;
                     default:
-                        error("non-numeric argument to binary operator");
+                        Rf_error("non-numeric argument to binary operator");
                 }
                 break;
             case OP_LT:
@@ -3196,7 +3196,7 @@ void Ops :: do_ops(T * x, Atoms * atm, index_t offset, index_t count, size_t ski
                         lt<T,T>(x, y, i, atm, 0, count, skip);
                         break;
                     default:
-                        error("non-numeric argument to binary operator");
+                        Rf_error("non-numeric argument to binary operator");
                 }
                 break;
             case OP_GE:
@@ -3217,7 +3217,7 @@ void Ops :: do_ops(T * x, Atoms * atm, index_t offset, index_t count, size_t ski
                         ge<T,T>(x, y, i, atm, 0, count, skip);
                         break;
                     default:
-                        error("non-numeric argument to binary operator");
+                        Rf_error("non-numeric argument to binary operator");
                 }
                 break;
             case OP_LE:
@@ -3238,7 +3238,7 @@ void Ops :: do_ops(T * x, Atoms * atm, index_t offset, index_t count, size_t ski
                         le<T,T>(x, y, i, atm, 0, count, skip);
                         break;
                     default:
-                        error("non-numeric argument to binary operator");
+                        Rf_error("non-numeric argument to binary operator");
                 }
                 break;
             // Math
@@ -3260,7 +3260,7 @@ void Ops :: do_ops(T * x, Atoms * atm, index_t offset, index_t count, size_t ski
                         log<T,T>(x, y, i, atm, 0, count, skip);
                         break;
                     default:
-                        error("non-numeric argument to mathematical function");
+                        Rf_error("non-numeric argument to mathematical function");
                 }
                 break;
         }
@@ -3275,7 +3275,7 @@ void Ops :: do_ops(T * x, Atoms * atm, index_t offset, index_t count, size_t ski
 template<typename RType, int SType>
 SEXP Matter :: readArray() {
     SEXP retVec;
-    PROTECT(retVec = allocVector(SType, length()));
+    PROTECT(retVec = Rf_allocVector(SType, length()));
     RType * pRetVec = DataPtr<RType,SType>(retVec);
     data().read<RType>(pRetVec, 0, length());
     UNPROTECT(1);
@@ -3294,7 +3294,7 @@ void Matter :: writeArray(SEXP value) {
 template<typename RType, int SType>
 SEXP Matter :: readArrayElements(SEXP i) {
     SEXP retVec;
-    PROTECT(retVec = allocVector(SType, XLENGTH(i)));
+    PROTECT(retVec = Rf_allocVector(SType, XLENGTH(i)));
     RType * pRetVec = DataPtr<RType,SType>(retVec);
     Rindex_t * pIndex = R_INDEX_PTR(i);
     data().read_indices<RType>(pRetVec, pIndex, XLENGTH(i));
@@ -3318,7 +3318,7 @@ void Matter :: writeArrayElements(SEXP i, SEXP value) {
 template<typename RType, int SType>
 SEXP Matter :: readListElements(int i) {
     SEXP retVec;
-    PROTECT(retVec = allocVector(SType, dim(i)));
+    PROTECT(retVec = Rf_allocVector(SType, dim(i)));
     RType * pRetVec = DataPtr<RType,SType>(retVec);
     data().set_group(i);
     data().read<RType>(pRetVec, 0, dim(i));
@@ -3329,7 +3329,7 @@ SEXP Matter :: readListElements(int i) {
 template<typename RType, int SType>
 SEXP Matter :: readListElements(int i, SEXP j) {
     SEXP retVec;
-    PROTECT(retVec = allocVector(SType, LENGTH(j)));
+    PROTECT(retVec = Rf_allocVector(SType, LENGTH(j)));
     RType * pRetVec = DataPtr<RType,SType>(retVec);
     data().set_group(i);
     data().read_indices<RType>(pRetVec, R_INDEX_PTR(j), XLENGTH(j));
@@ -3365,7 +3365,7 @@ template<typename RType, int SType>
 SEXP Matter :: readMatrix() {
     SEXP retMat;
     int nrows = this->nrows(), ncols = this->ncols();
-    PROTECT(retMat = allocMatrix(SType, nrows, ncols));
+    PROTECT(retMat = Rf_allocMatrix(SType, nrows, ncols));
     RType * pRetMat = DataPtr<RType,SType>(retMat);
     switch(S4class()) {
         case MATTER_MATC:
@@ -3381,7 +3381,7 @@ SEXP Matter :: readMatrix() {
             }
             break;
         default:
-            error("unrecognized matrix subclass");
+            Rf_error("unrecognized matrix subclass");
     }
     UNPROTECT(1);
     return retMat;
@@ -3411,7 +3411,7 @@ void Matter :: writeMatrix(SEXP value) {
             }
             break;
         default:
-            error("unrecognized matrix subclass");
+            Rf_error("unrecognized matrix subclass");
     }
 }
 
@@ -3419,7 +3419,7 @@ template<typename RType, int SType>
 SEXP Matter :: readMatrixRows(SEXP i) {
     SEXP retMat;
     int nrows = LENGTH(i), ncols = this->ncols();
-    PROTECT(retMat = allocMatrix(SType, nrows, ncols));
+    PROTECT(retMat = Rf_allocMatrix(SType, nrows, ncols));
     RType * pRetMat = DataPtr<RType,SType>(retMat);
     Rindex_t * pRow = R_INDEX_PTR(i);
     switch(S4class()) {
@@ -3441,7 +3441,7 @@ SEXP Matter :: readMatrixRows(SEXP i) {
             }
             break;
         default:
-            error("unrecognized matrix subclass");
+            Rf_error("unrecognized matrix subclass");
     }
     UNPROTECT(1);
     return retMat;
@@ -3475,7 +3475,7 @@ void Matter :: writeMatrixRows(SEXP i, SEXP value) {
             }
             break;
         default:
-            error("unrecognized matrix subclass");
+            Rf_error("unrecognized matrix subclass");
     }
 }
 
@@ -3483,7 +3483,7 @@ template<typename RType, int SType>
 SEXP Matter :: readMatrixCols(SEXP j) {
     SEXP retMat;
     int nrows = this->nrows(), ncols = LENGTH(j);
-    PROTECT(retMat = allocMatrix(SType, nrows, ncols));
+    PROTECT(retMat = Rf_allocMatrix(SType, nrows, ncols));
     RType * pRetMat = DataPtr<RType,SType>(retMat);
     Rindex_t * pCol = R_INDEX_PTR(j);
     switch(S4class()) {
@@ -3505,7 +3505,7 @@ SEXP Matter :: readMatrixCols(SEXP j) {
             }
             break;
         default:
-            error("unrecognized matrix subclass");
+            Rf_error("unrecognized matrix subclass");
     }
     UNPROTECT(1);
     return retMat;
@@ -3539,7 +3539,7 @@ void Matter :: writeMatrixCols(SEXP j, SEXP value) {
             }
             break;
         default:
-            error("unrecognized matrix subclass");
+            Rf_error("unrecognized matrix subclass");
     }
 }
 
@@ -3547,7 +3547,7 @@ template<typename RType, int SType>
 SEXP Matter :: readMatrixElements(SEXP i, SEXP j) {
     SEXP retMat;
     int nrows = LENGTH(i), ncols = LENGTH(j);
-    PROTECT(retMat = allocMatrix(SType, nrows, ncols));
+    PROTECT(retMat = Rf_allocMatrix(SType, nrows, ncols));
     RType * pRetMat = DataPtr<RType,SType>(retMat);
     Rindex_t * pRow = R_INDEX_PTR(i);
     Rindex_t * pCol = R_INDEX_PTR(j);
@@ -3575,7 +3575,7 @@ SEXP Matter :: readMatrixElements(SEXP i, SEXP j) {
             }
             break;
         default:
-            error("unrecognized matrix subclass");
+            Rf_error("unrecognized matrix subclass");
     }
     UNPROTECT(1);
     return retMat;
@@ -3613,7 +3613,7 @@ void Matter :: writeMatrixElements(SEXP i, SEXP j, SEXP value) {
             }
             break;
         default:
-            error("unrecognized matrix subclass");
+            Rf_error("unrecognized matrix subclass");
     }
 }
 
@@ -3757,7 +3757,7 @@ int all(MatterIterator<T> & x, bool na_rm) {
 template<typename T>
 SEXP Matter :: range(bool na_rm) {
     SEXP retVal;
-    PROTECT(retVal = NEW_NUMERIC(2));
+    PROTECT(retVal = Rf_allocVector(REALSXP, 2));
     MatterIterator<T> x(*this);
     pair_double tmp = ::range<T>(x, na_rm);
     REAL(retVal)[0] = tmp.first;
@@ -3769,7 +3769,7 @@ SEXP Matter :: range(bool na_rm) {
 template<typename T>
 SEXP Matter :: prod(bool na_rm) {
     SEXP retVal;
-    PROTECT(retVal = NEW_NUMERIC(1));
+    PROTECT(retVal = Rf_allocVector(REALSXP, 1));
     MatterIterator<T> x(*this);
     *REAL(retVal) = ::prod<T>(x, na_rm);
     UNPROTECT(1);
@@ -3779,7 +3779,7 @@ SEXP Matter :: prod(bool na_rm) {
 template<typename T>
 SEXP Matter :: sum(bool na_rm) {
     SEXP retVal;
-    PROTECT(retVal = NEW_NUMERIC(1));
+    PROTECT(retVal = Rf_allocVector(REALSXP, 1));
     MatterIterator<T> x(*this);
     *REAL(retVal) = ::sum<T>(x, na_rm);
     UNPROTECT(1);
@@ -3789,7 +3789,7 @@ SEXP Matter :: sum(bool na_rm) {
 template<typename T>
 SEXP Matter :: mean(bool na_rm) {
     SEXP retVal;
-    PROTECT(retVal = NEW_NUMERIC(1));
+    PROTECT(retVal = Rf_allocVector(REALSXP, 1));
     MatterIterator<T> x(*this);
     *REAL(retVal) = ::mean<T>(x, na_rm);
     UNPROTECT(1);
@@ -3799,7 +3799,7 @@ SEXP Matter :: mean(bool na_rm) {
 template<typename T>
 SEXP Matter :: var(bool na_rm) {
     SEXP retVal;
-    PROTECT(retVal = NEW_NUMERIC(1));
+    PROTECT(retVal = Rf_allocVector(REALSXP, 1));
     MatterIterator<T> x(*this);
     *REAL(retVal) = ::var<T>(x, na_rm);
     UNPROTECT(1);
@@ -3809,7 +3809,7 @@ SEXP Matter :: var(bool na_rm) {
 template<typename T>
 SEXP Matter :: any(bool na_rm) {
     SEXP retVal;
-    PROTECT(retVal = NEW_LOGICAL(1));
+    PROTECT(retVal = Rf_allocVector(LGLSXP, 1));
     MatterIterator<T> x(*this);
     *LOGICAL(retVal) = ::any<T>(x, na_rm);
     UNPROTECT(1);
@@ -3819,7 +3819,7 @@ SEXP Matter :: any(bool na_rm) {
 template<typename T>
 SEXP Matter :: all(bool na_rm) {
     SEXP retVal;
-    PROTECT(retVal = NEW_LOGICAL(1));
+    PROTECT(retVal = Rf_allocVector(LGLSXP, 1));
     MatterIterator<T> x(*this);
     *LOGICAL(retVal) = ::all<T>(x, na_rm);
     UNPROTECT(1);
@@ -3829,7 +3829,7 @@ SEXP Matter :: all(bool na_rm) {
 template<typename T>
 SEXP Matter :: colsums(bool na_rm) {
     SEXP retVal;
-    PROTECT(retVal = NEW_NUMERIC(ncols()));
+    PROTECT(retVal = Rf_allocVector(REALSXP, ncols()));
     double * pRetVal = REAL(retVal);
     switch(S4class()) {
         case MATTER_MATC:
@@ -3858,7 +3858,7 @@ SEXP Matter :: colsums(bool na_rm) {
             }
             break;
         default:
-            error("unrecognised matrix subclass");
+            Rf_error("unrecognised matrix subclass");
     }
     UNPROTECT(1);
     return retVal;
@@ -3867,7 +3867,7 @@ SEXP Matter :: colsums(bool na_rm) {
 template<typename T>
 SEXP Matter :: colmeans(bool na_rm) {
     SEXP retVal;
-    PROTECT(retVal = NEW_NUMERIC(ncols()));
+    PROTECT(retVal = Rf_allocVector(REALSXP, ncols()));
     double * pRetVal = REAL(retVal);
     switch(S4class()) {
         case MATTER_MATC:
@@ -3908,7 +3908,7 @@ SEXP Matter :: colmeans(bool na_rm) {
             }
             break;
         default:
-            error("unrecognised matrix subclass");
+            Rf_error("unrecognised matrix subclass");
     }
     UNPROTECT(1);
     return retVal;
@@ -3917,7 +3917,7 @@ SEXP Matter :: colmeans(bool na_rm) {
 template<typename T>
 SEXP Matter :: colvar(bool na_rm) {
     SEXP retVal;
-    PROTECT(retVal = NEW_NUMERIC(ncols()));
+    PROTECT(retVal = Rf_allocVector(REALSXP, ncols()));
     double * pRetVal = REAL(retVal);
     switch(S4class()) {
         case MATTER_MATC:
@@ -3984,7 +3984,7 @@ SEXP Matter :: colvar(bool na_rm) {
             }
             break;
         default:
-            error("unrecognised matrix subclass");
+            Rf_error("unrecognised matrix subclass");
     }
     UNPROTECT(1);
     return retVal;
@@ -3993,7 +3993,7 @@ SEXP Matter :: colvar(bool na_rm) {
 template<typename T>
 SEXP Matter :: rowsums(bool na_rm) {
     SEXP retVal;
-    PROTECT(retVal = NEW_NUMERIC(nrows()));
+    PROTECT(retVal = Rf_allocVector(REALSXP, nrows()));
     double * pRetVal = REAL(retVal);
     switch(S4class()) {
         case MATTER_MATC:
@@ -4022,7 +4022,7 @@ SEXP Matter :: rowsums(bool na_rm) {
             }
             break;
         default:
-            error("unrecognised matrix subclass");
+            Rf_error("unrecognised matrix subclass");
     }
     UNPROTECT(1);
     return retVal;
@@ -4031,7 +4031,7 @@ SEXP Matter :: rowsums(bool na_rm) {
 template<typename T>
 SEXP Matter :: rowmeans(bool na_rm) {
     SEXP retVal;
-    PROTECT(retVal = NEW_NUMERIC(nrows()));
+    PROTECT(retVal = Rf_allocVector(REALSXP, nrows()));
     double * pRetVal = REAL(retVal);
     switch(S4class()) {
         case MATTER_MATC:
@@ -4072,7 +4072,7 @@ SEXP Matter :: rowmeans(bool na_rm) {
             }
             break;
         default:
-            error("unrecognised matrix subclass");
+            Rf_error("unrecognised matrix subclass");
     }
     UNPROTECT(1);
     return retVal;
@@ -4081,7 +4081,7 @@ SEXP Matter :: rowmeans(bool na_rm) {
 template<typename T>
 SEXP Matter :: rowvar(bool na_rm) {
     SEXP retVal;
-    PROTECT(retVal = NEW_NUMERIC(nrows()));
+    PROTECT(retVal = Rf_allocVector(REALSXP, nrows()));
     double * pRetVal = REAL(retVal);
     switch(S4class()) {
         case MATTER_MATC:
@@ -4148,7 +4148,7 @@ SEXP Matter :: rowvar(bool na_rm) {
             }
             break;
         default:
-            error("unrecognised matrix subclass");
+            Rf_error("unrecognised matrix subclass");
     }
     UNPROTECT(1);
     return retVal;
@@ -4157,12 +4157,12 @@ SEXP Matter :: rowvar(bool na_rm) {
 template<typename T, typename RType, int SType>
 SEXP Matter :: rmult(SEXP y) {
     SEXP retMat;
-    PROTECT(retMat = allocMatrix(REALSXP, nrows(), ::ncols(y)));
+    PROTECT(retMat = Rf_allocMatrix(REALSXP, nrows(), Rf_ncols(y)));
     double * pRetMat = REAL(retMat);
     RType * pY = DataPtr<RType,SType>(y);
-    int nrRetMat = ::nrows(retMat);
-    int ncRetMat = ::ncols(retMat);
-    int nrY = ::nrows(y);
+    int nrRetMat = Rf_nrows(retMat);
+    int ncRetMat = Rf_ncols(retMat);
+    int nrY = Rf_nrows(y);
     R_xlen_t len = XLENGTH(retMat);
     for ( int k = 0; k < len; k++ )
         pRetMat[k] = 0;
@@ -4196,7 +4196,7 @@ SEXP Matter :: rmult(SEXP y) {
             }
             break;
         default:
-            error("unrecognised matrix subclass");
+            Rf_error("unrecognised matrix subclass");
     }
     UNPROTECT(1);
     return retMat;
@@ -4205,11 +4205,11 @@ SEXP Matter :: rmult(SEXP y) {
 template<typename T, typename RType, int SType>
 SEXP Matter :: lmult(SEXP x) {
     SEXP retMat;
-    PROTECT(retMat = allocMatrix(REALSXP, ::nrows(x), ncols()));
+    PROTECT(retMat = Rf_allocMatrix(REALSXP, Rf_nrows(x), ncols()));
     double * pRetMat = REAL(retMat);
     RType * pX = DataPtr<RType,SType>(x);
-    int nrRetMat = ::nrows(retMat);
-    int nrX = ::nrows(x);
+    int nrRetMat = Rf_nrows(retMat);
+    int nrX = Rf_nrows(x);
     int len = LENGTH(retMat);
     for ( int k = 0; k < len; k++ )
         pRetMat[k] = 0;
@@ -4243,7 +4243,7 @@ SEXP Matter :: lmult(SEXP x) {
             }
             break;
         default:
-            error("unrecognised matrix subclass");
+            Rf_error("unrecognised matrix subclass");
     }
     UNPROTECT(1);
     return retMat;
@@ -4260,7 +4260,7 @@ SEXP Matter :: which() {
             int * tmp = Realloc(buffer, buffersize, int);
             if ( !tmp ) {
                 Free(buffer);
-                error("could not allocate return vector");
+                Rf_error("could not allocate return vector");
             }
             buffer = tmp;
         }
@@ -4271,7 +4271,7 @@ SEXP Matter :: which() {
         ++x;
         i++;
     }
-    PROTECT(retVec = NEW_INTEGER(count));
+    PROTECT(retVec = Rf_allocVector(INTSXP, count));
     memcpy(INTEGER(retVec), buffer, sizeof(int) * count);
     Free(buffer);
     UNPROTECT(1);
@@ -4296,10 +4296,10 @@ extern "C" {
         VectorOrDRLE<int,INTSXP> vGroupID(group_id);
         VectorOrDRLE<double,REALSXP> vExtent(extent);
         int n = vGroupID.length();
-        PROTECT(natoms = NEW_INTEGER(1));
-        PROTECT(ngroups = NEW_INTEGER(1));
-        PROTECT(index_offset = NEW_NUMERIC(n));
-        PROTECT(index_extent = NEW_NUMERIC(n));
+        PROTECT(natoms = Rf_allocVector(INTSXP, 1));
+        PROTECT(ngroups = Rf_allocVector(INTSXP, 1));
+        PROTECT(index_offset = Rf_allocVector(REALSXP, n));
+        PROTECT(index_extent = Rf_allocVector(REALSXP, n));
         pIndexOffset = REAL(index_offset);
         pIndexExtent = REAL(index_extent);
         int ext, gid, g_cur = 0, g_n = 0, cum_sum = 0;
@@ -4318,17 +4318,17 @@ extern "C" {
         INTEGER(natoms)[0] = n;
         INTEGER(ngroups)[0] = g_n;
         SEXP classDef, retObj;
-        PROTECT(classDef = MAKE_CLASS("atoms"));
-        PROTECT(retObj = NEW_OBJECT(classDef));
-        SET_SLOT(retObj, install("natoms"), natoms);
-        SET_SLOT(retObj, install("ngroups"), ngroups);
-        SET_SLOT(retObj, install("group_id"), group_id);
-        SET_SLOT(retObj, install("source_id"), source_id);
-        SET_SLOT(retObj, install("datamode"), datamode);
-        SET_SLOT(retObj, install("offset"), offset);
-        SET_SLOT(retObj, install("extent"), extent);
-        SET_SLOT(retObj, install("index_offset"), index_offset);
-        SET_SLOT(retObj, install("index_extent"), index_extent);
+        PROTECT(classDef = R_do_MAKE_CLASS("atoms"));
+        PROTECT(retObj = R_do_new_object(classDef));
+        R_do_slot_assign(retObj, Rf_install("natoms"), natoms);
+        R_do_slot_assign(retObj, Rf_install("ngroups"), ngroups);
+        R_do_slot_assign(retObj, Rf_install("group_id"), group_id);
+        R_do_slot_assign(retObj, Rf_install("source_id"), source_id);
+        R_do_slot_assign(retObj, Rf_install("datamode"), datamode);
+        R_do_slot_assign(retObj, Rf_install("offset"), offset);
+        R_do_slot_assign(retObj, Rf_install("extent"), extent);
+        R_do_slot_assign(retObj, Rf_install("index_offset"), index_offset);
+        R_do_slot_assign(retObj, Rf_install("index_extent"), index_extent);
         UNPROTECT(6);
         return retObj;
     }
@@ -4404,7 +4404,7 @@ extern "C" {
     SEXP getList(SEXP x) {
         Matter mVec(x);
         SEXP retVec;
-        PROTECT(retVec = allocVector(VECSXP, mVec.length()));
+        PROTECT(retVec = Rf_allocVector(VECSXP, mVec.length()));
         for ( int i = 0; i < mVec.length(); i++ ) {
             switch(mVec.datamode(i)) {
                 case R_RAW:
@@ -4452,28 +4452,28 @@ extern "C" {
     SEXP getListElements(SEXP x, SEXP i, SEXP j) {
         Matter mVec(x);
         if ( j == R_NilValue ) {
-            switch(mVec.datamode(INTEGER_VALUE(i))) {
+            switch(mVec.datamode(Rf_asInteger(i))) {
                 case R_RAW:
-                    return mVec.readListElements<Rbyte,RAWSXP>(INTEGER_VALUE(i));
+                    return mVec.readListElements<Rbyte,RAWSXP>(Rf_asInteger(i));
                 case R_LOGICAL:
-                    return mVec.readListElements<int,LGLSXP>(INTEGER_VALUE(i));
+                    return mVec.readListElements<int,LGLSXP>(Rf_asInteger(i));
                 case R_INTEGER:
-                    return mVec.readListElements<int,INTSXP>(INTEGER_VALUE(i));
+                    return mVec.readListElements<int,INTSXP>(Rf_asInteger(i));
                 case R_NUMERIC:
-                    return mVec.readListElements<double,REALSXP>(INTEGER_VALUE(i));
+                    return mVec.readListElements<double,REALSXP>(Rf_asInteger(i));
                 default:
                     return R_NilValue;
             }
         } else {
-            switch(mVec.datamode(INTEGER_VALUE(i))) {
+            switch(mVec.datamode(Rf_asInteger(i))) {
                 case R_RAW:
-                    return mVec.readListElements<Rbyte,RAWSXP>(INTEGER_VALUE(i), j);
+                    return mVec.readListElements<Rbyte,RAWSXP>(Rf_asInteger(i), j);
                 case R_LOGICAL:
-                    return mVec.readListElements<int,LGLSXP>(INTEGER_VALUE(i), j);
+                    return mVec.readListElements<int,LGLSXP>(Rf_asInteger(i), j);
                 case R_INTEGER:
-                    return mVec.readListElements<int,INTSXP>(INTEGER_VALUE(i), j);
+                    return mVec.readListElements<int,INTSXP>(Rf_asInteger(i), j);
                 case R_NUMERIC:
-                    return mVec.readListElements<double,REALSXP>(INTEGER_VALUE(i), j);
+                    return mVec.readListElements<double,REALSXP>(Rf_asInteger(i), j);
                 default:
                     return R_NilValue;
             }
@@ -4485,31 +4485,31 @@ extern "C" {
         if ( j == R_NilValue ) {
             switch(TYPEOF(value)) {
                 case RAWSXP:
-                    mVec.writeListElements<Rbyte,RAWSXP>(INTEGER_VALUE(i), value);
+                    mVec.writeListElements<Rbyte,RAWSXP>(Rf_asInteger(i), value);
                     break;
                 case LGLSXP:
-                    mVec.writeListElements<int,LGLSXP>(INTEGER_VALUE(i), value);
+                    mVec.writeListElements<int,LGLSXP>(Rf_asInteger(i), value);
                     break;
                 case INTSXP:
-                    mVec.writeListElements<int,INTSXP>(INTEGER_VALUE(i), value);
+                    mVec.writeListElements<int,INTSXP>(Rf_asInteger(i), value);
                     break;
                 case REALSXP:
-                    mVec.writeListElements<double,REALSXP>(INTEGER_VALUE(i), value);
+                    mVec.writeListElements<double,REALSXP>(Rf_asInteger(i), value);
                     break;
             }
         } else {
             switch(TYPEOF(value)) {
                 case RAWSXP:
-                    mVec.writeListElements<Rbyte,RAWSXP>(INTEGER_VALUE(i), j, value);
+                    mVec.writeListElements<Rbyte,RAWSXP>(Rf_asInteger(i), j, value);
                     break;
                 case LGLSXP:
-                    mVec.writeListElements<int,LGLSXP>(INTEGER_VALUE(i), j, value);
+                    mVec.writeListElements<int,LGLSXP>(Rf_asInteger(i), j, value);
                     break;
                 case INTSXP:
-                    mVec.writeListElements<int,INTSXP>(INTEGER_VALUE(i), j, value);
+                    mVec.writeListElements<int,INTSXP>(Rf_asInteger(i), j, value);
                     break;
                 case REALSXP:
-                    mVec.writeListElements<double,REALSXP>(INTEGER_VALUE(i), j, value);
+                    mVec.writeListElements<double,REALSXP>(Rf_asInteger(i), j, value);
                     break;
             }
         }
@@ -4655,11 +4655,11 @@ extern "C" {
         Matter mMat(x);
         switch ( mMat.datamode() ) {
             case R_LOGICAL:
-                return mMat.range<double>(LOGICAL_VALUE(na_rm));
+                return mMat.range<double>(Rf_asLogical(na_rm));
             case R_INTEGER:
-                return mMat.range<double>(LOGICAL_VALUE(na_rm));
+                return mMat.range<double>(Rf_asLogical(na_rm));
             case R_NUMERIC:
-                return mMat.range<double>(LOGICAL_VALUE(na_rm));
+                return mMat.range<double>(Rf_asLogical(na_rm));
             default:
                 return R_NilValue;
         }
@@ -4669,11 +4669,11 @@ extern "C" {
         Matter mMat(x);
         switch ( mMat.datamode() ) {
             case R_LOGICAL:
-                return mMat.prod<double>(LOGICAL_VALUE(na_rm));
+                return mMat.prod<double>(Rf_asLogical(na_rm));
             case R_INTEGER:
-                return mMat.prod<double>(LOGICAL_VALUE(na_rm));
+                return mMat.prod<double>(Rf_asLogical(na_rm));
             case R_NUMERIC:
-                return mMat.prod<double>(LOGICAL_VALUE(na_rm));
+                return mMat.prod<double>(Rf_asLogical(na_rm));
             default:
                 return R_NilValue;
         }
@@ -4683,11 +4683,11 @@ extern "C" {
         Matter mMat(x);
         switch ( mMat.datamode() ) {
             case R_LOGICAL:
-                return mMat.sum<double>(LOGICAL_VALUE(na_rm));
+                return mMat.sum<double>(Rf_asLogical(na_rm));
             case R_INTEGER:
-                return mMat.sum<double>(LOGICAL_VALUE(na_rm));
+                return mMat.sum<double>(Rf_asLogical(na_rm));
             case R_NUMERIC:
-                return mMat.sum<double>(LOGICAL_VALUE(na_rm));
+                return mMat.sum<double>(Rf_asLogical(na_rm));
             default:
                 return R_NilValue;
         }
@@ -4697,11 +4697,11 @@ extern "C" {
         Matter mMat(x);
         switch ( mMat.datamode() ) {
             case R_LOGICAL:
-                return mMat.mean<double>(LOGICAL_VALUE(na_rm));
+                return mMat.mean<double>(Rf_asLogical(na_rm));
             case R_INTEGER:
-                return mMat.mean<double>(LOGICAL_VALUE(na_rm));
+                return mMat.mean<double>(Rf_asLogical(na_rm));
             case R_NUMERIC:
-                return mMat.mean<double>(LOGICAL_VALUE(na_rm));
+                return mMat.mean<double>(Rf_asLogical(na_rm));
             default:
                 return R_NilValue;
         }
@@ -4711,11 +4711,11 @@ extern "C" {
         Matter mMat(x);
         switch ( mMat.datamode() ) {
             case R_LOGICAL:
-                return mMat.var<double>(LOGICAL_VALUE(na_rm));
+                return mMat.var<double>(Rf_asLogical(na_rm));
             case R_INTEGER:
-                return mMat.var<double>(LOGICAL_VALUE(na_rm));
+                return mMat.var<double>(Rf_asLogical(na_rm));
             case R_NUMERIC:
-                return mMat.var<double>(LOGICAL_VALUE(na_rm));
+                return mMat.var<double>(Rf_asLogical(na_rm));
             default:
                 return R_NilValue;
         }
@@ -4725,11 +4725,11 @@ extern "C" {
         Matter mMat(x);
         switch ( mMat.datamode() ) {
             case R_LOGICAL:
-                return mMat.any<int>(LOGICAL_VALUE(na_rm));
+                return mMat.any<int>(Rf_asLogical(na_rm));
             case R_INTEGER:
-                return mMat.any<int>(LOGICAL_VALUE(na_rm));
+                return mMat.any<int>(Rf_asLogical(na_rm));
             case R_NUMERIC:
-                return mMat.any<int>(LOGICAL_VALUE(na_rm));
+                return mMat.any<int>(Rf_asLogical(na_rm));
             default:
                 return R_NilValue;
         }
@@ -4739,11 +4739,11 @@ extern "C" {
         Matter mMat(x);
         switch ( mMat.datamode() ) {
             case R_LOGICAL:
-                return mMat.all<int>(LOGICAL_VALUE(na_rm));
+                return mMat.all<int>(Rf_asLogical(na_rm));
             case R_INTEGER:
-                return mMat.all<int>(LOGICAL_VALUE(na_rm));
+                return mMat.all<int>(Rf_asLogical(na_rm));
             case R_NUMERIC:
-                return mMat.all<int>(LOGICAL_VALUE(na_rm));
+                return mMat.all<int>(Rf_asLogical(na_rm));
             default:
                 return R_NilValue;
         }
@@ -4753,11 +4753,11 @@ extern "C" {
         Matter mMat(x);
         switch ( mMat.datamode() ) {
             case R_LOGICAL:
-                return mMat.colsums<double>(LOGICAL_VALUE(na_rm));
+                return mMat.colsums<double>(Rf_asLogical(na_rm));
             case R_INTEGER:
-                return mMat.colsums<double>(LOGICAL_VALUE(na_rm));
+                return mMat.colsums<double>(Rf_asLogical(na_rm));
             case R_NUMERIC:
-                return mMat.colsums<double>(LOGICAL_VALUE(na_rm));
+                return mMat.colsums<double>(Rf_asLogical(na_rm));
             default:
                 return R_NilValue;
         }
@@ -4767,11 +4767,11 @@ extern "C" {
         Matter mMat(x);
         switch ( mMat.datamode() ) {
             case R_LOGICAL:
-                return mMat.colmeans<double>(LOGICAL_VALUE(na_rm));
+                return mMat.colmeans<double>(Rf_asLogical(na_rm));
             case R_INTEGER:
-                return mMat.colmeans<double>(LOGICAL_VALUE(na_rm));
+                return mMat.colmeans<double>(Rf_asLogical(na_rm));
             case R_NUMERIC:
-                return mMat.colmeans<double>(LOGICAL_VALUE(na_rm));
+                return mMat.colmeans<double>(Rf_asLogical(na_rm));
             default:
                 return R_NilValue;
         }
@@ -4781,11 +4781,11 @@ extern "C" {
         Matter mMat(x);
         switch ( mMat.datamode() ) {
             case R_LOGICAL:
-                return mMat.colvar<double>(LOGICAL_VALUE(na_rm));
+                return mMat.colvar<double>(Rf_asLogical(na_rm));
             case R_INTEGER:
-                return mMat.colvar<double>(LOGICAL_VALUE(na_rm));
+                return mMat.colvar<double>(Rf_asLogical(na_rm));
             case R_NUMERIC:
-                return mMat.colvar<double>(LOGICAL_VALUE(na_rm));
+                return mMat.colvar<double>(Rf_asLogical(na_rm));
             default:
                 return R_NilValue;
         }
@@ -4795,11 +4795,11 @@ extern "C" {
         Matter mMat(x);
         switch ( mMat.datamode() ) {
             case R_LOGICAL:
-                return mMat.rowsums<double>(LOGICAL_VALUE(na_rm));
+                return mMat.rowsums<double>(Rf_asLogical(na_rm));
             case R_INTEGER:
-                return mMat.rowsums<double>(LOGICAL_VALUE(na_rm));
+                return mMat.rowsums<double>(Rf_asLogical(na_rm));
             case R_NUMERIC:
-                return mMat.rowsums<double>(LOGICAL_VALUE(na_rm));
+                return mMat.rowsums<double>(Rf_asLogical(na_rm));
             default:
                 return R_NilValue;
         }
@@ -4809,11 +4809,11 @@ extern "C" {
         Matter mMat(x);
         switch ( mMat.datamode() ) {
             case R_LOGICAL:
-                return mMat.rowmeans<double>(LOGICAL_VALUE(na_rm));
+                return mMat.rowmeans<double>(Rf_asLogical(na_rm));
             case R_INTEGER:
-                return mMat.rowmeans<double>(LOGICAL_VALUE(na_rm));
+                return mMat.rowmeans<double>(Rf_asLogical(na_rm));
             case R_NUMERIC:
-                return mMat.rowmeans<double>(LOGICAL_VALUE(na_rm));
+                return mMat.rowmeans<double>(Rf_asLogical(na_rm));
             default:
                 return R_NilValue;
         }
@@ -4823,11 +4823,11 @@ extern "C" {
         Matter mMat(x);
         switch ( mMat.datamode() ) {
             case R_LOGICAL:
-                return mMat.rowvar<double>(LOGICAL_VALUE(na_rm));
+                return mMat.rowvar<double>(Rf_asLogical(na_rm));
             case R_INTEGER:
-                return mMat.rowvar<double>(LOGICAL_VALUE(na_rm));
+                return mMat.rowvar<double>(Rf_asLogical(na_rm));
             case R_NUMERIC:
-                return mMat.rowvar<double>(LOGICAL_VALUE(na_rm));
+                return mMat.rowvar<double>(Rf_asLogical(na_rm));
             default:
                 return R_NilValue;
         }
@@ -4890,7 +4890,7 @@ extern "C" {
 
     SEXP countRuns(SEXP x) {
         SEXP ret;
-        PROTECT(ret = NEW_INTEGER(1));
+        PROTECT(ret = Rf_allocVector(INTSXP, 1));
         if ( TYPEOF(x) == INTSXP )
         {
             INTEGER(ret)[0] = count_runs<int>(INTEGER(x), LENGTH(x));
@@ -4916,7 +4916,7 @@ extern "C" {
     }
 
     SEXP getDRLE(SEXP x) {
-        SEXP values = GET_SLOT(x, install("values"));
+        SEXP values = R_do_slot(x, Rf_install("values"));
         if ( TYPEOF(values) == INTSXP )
         {
             VectorOrDRLE<int,INTSXP> dVec(x);
@@ -4931,7 +4931,7 @@ extern "C" {
     }
 
     SEXP getDRLEElements(SEXP x, SEXP i) {
-        SEXP values = GET_SLOT(x, install("values"));
+        SEXP values = R_do_slot(x, Rf_install("values"));
         if ( TYPEOF(values) == INTSXP )
         {
             VectorOrDRLE<int,INTSXP> dVec(x);
@@ -4950,12 +4950,12 @@ extern "C" {
         switch(TYPEOF(x)) {
             case INTSXP:
                 return group_means<int>(INTEGER(x), INTEGER(group),
-                    INTEGER_VALUE(ngroup), LENGTH(x), NUMERIC_VALUE(init));
+                    Rf_asInteger(ngroup), LENGTH(x), Rf_asReal(init));
             case REALSXP:
                 return group_means<double>(REAL(x), INTEGER(group),
-                    INTEGER_VALUE(ngroup), LENGTH(x), NUMERIC_VALUE(init));
+                    Rf_asInteger(ngroup), LENGTH(x), Rf_asReal(init));
         }
-        error("supported types are 'integer' or 'numeric'");
+        Rf_error("supported types are 'integer' or 'numeric'");
     }
 
     SEXP groupSums(SEXP x, SEXP group, SEXP ngroup, SEXP init)
@@ -4963,12 +4963,12 @@ extern "C" {
         switch(TYPEOF(x)) {
             case INTSXP:
                 return group_sums<int>(INTEGER(x), INTEGER(group),
-                    INTEGER_VALUE(ngroup), LENGTH(x), NUMERIC_VALUE(init));
+                    Rf_asInteger(ngroup), LENGTH(x), Rf_asReal(init));
             case REALSXP:
                 return group_sums<double>(REAL(x), INTEGER(group),
-                    INTEGER_VALUE(ngroup), LENGTH(x), NUMERIC_VALUE(init));
+                    Rf_asInteger(ngroup), LENGTH(x), Rf_asReal(init));
         }
-        error("supported types are 'integer' or 'numeric'");
+        Rf_error("supported types are 'integer' or 'numeric'");
     }
 
     SEXP groupMins(SEXP x, SEXP group, SEXP ngroup, SEXP init)
@@ -4976,12 +4976,12 @@ extern "C" {
         switch(TYPEOF(x)) {
             case INTSXP:
                 return group_mins<int>(INTEGER(x), INTEGER(group),
-                    INTEGER_VALUE(ngroup), LENGTH(x), NUMERIC_VALUE(init));
+                    Rf_asInteger(ngroup), LENGTH(x), Rf_asReal(init));
             case REALSXP:
                 return group_mins<double>(REAL(x), INTEGER(group),
-                    INTEGER_VALUE(ngroup), LENGTH(x), NUMERIC_VALUE(init));
+                    Rf_asInteger(ngroup), LENGTH(x), Rf_asReal(init));
         }
-        error("supported types are 'integer' or 'numeric'");
+        Rf_error("supported types are 'integer' or 'numeric'");
     }
 
     SEXP groupMaxs(SEXP x, SEXP group, SEXP ngroup, SEXP init)
@@ -4989,12 +4989,12 @@ extern "C" {
         switch(TYPEOF(x)) {
             case INTSXP:
                 return group_maxs<int>(INTEGER(x), INTEGER(group),
-                    INTEGER_VALUE(ngroup), LENGTH(x), NUMERIC_VALUE(init));
+                    Rf_asInteger(ngroup), LENGTH(x), Rf_asReal(init));
             case REALSXP:
                 return group_maxs<double>(REAL(x), INTEGER(group),
-                    INTEGER_VALUE(ngroup), LENGTH(x), NUMERIC_VALUE(init));
+                    Rf_asInteger(ngroup), LENGTH(x), Rf_asReal(init));
         }
-        error("supported types are 'integer' or 'numeric'");
+        Rf_error("supported types are 'integer' or 'numeric'");
     }
 
 }
