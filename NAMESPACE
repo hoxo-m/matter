@@ -177,6 +177,10 @@ S3method("print", "bytes")
 S3method("format", "bytes")
 
 export(
+	"make_filemode",
+	"common_filemode")
+
+export(
 	"sizeof",
 	"make_datamode",
 	"convert_datamode",
