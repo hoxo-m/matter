@@ -44,7 +44,7 @@
 \title{Sparse Matrices}
 
 \description{
-    The \code{sparse_mat} class implements sparse matrices, potentially stored on-disk. Both compressed-sparse-column (CSC) and compressed-sparse-row (CSR) formats are supported. Non-zero elements are internally represented as key-value pairs.
+    The \code{sparse_mat} class implements sparse matrices, potentially stored out-of-memory. Both compressed-sparse-column (CSC) and compressed-sparse-row (CSR) formats are supported. Non-zero elements are internally represented as key-value pairs.
 }
 
 \usage{
@@ -65,7 +65,7 @@ as.sparse(x, \dots)
 \arguments{
         \item{data}{Either a length-2 'list' with elements 'keys' and 'values' which provide the halves of the key-value pairs of the non-zero elements, or a data matrix that will be used to initialized the sparse matrix. If a list is given, all 'keys' elements must be \emph{sorted} in increasing order.}
 
-        \item{datamode}{A 'character' vector giving the storage mode of the data on disk. Allowable values are R numeric and logical types ('logical', 'integer', 'numeric') and their C equivalents.}
+        \item{datamode}{A 'character' vector giving the storage mode of the data in virtual memory. Allowable values are R numeric and logical types ('logical', 'integer', 'numeric') and their C equivalents.}
 
         \item{nrow}{An optional number giving the total number of rows.}
 
@@ -88,7 +88,7 @@ as.sparse(x, \dots)
 
 \section{Slots}{
     \describe{
-        \item{\code{data}:}{This slot stores the information about locations of the data on disk and within the files.}
+        \item{\code{data}:}{This slot stores the information about locations of the data in virtual memory and within the files.}
 
         \item{\code{datamode}:}{The storage mode of the accessed data when read into R. This should a 'character' vector of length one with value 'integer' or 'numeric'.}
 
@@ -117,7 +117,7 @@ as.sparse(x, \dots)
 }
 
 \section{Warning}{
-    If 'data' is given as a length-2 list of key-value pairs, no checking is performed on the validity of the key-value pairs, as this may be a costly operation if the list is stored on disk. Each element of the 'keys' element must be \emph{sorted} in increasing order, or behavior may be unexpected.
+    If 'data' is given as a length-2 list of key-value pairs, no checking is performed on the validity of the key-value pairs, as this may be a costly operation if the list is stored in virtual memory. Each element of the 'keys' element must be \emph{sorted} in increasing order, or behavior may be unexpected.
 
     Assigning a new data element to the sparse matrix will always sort the key-value pairs of the row or column into which it was assigned.
 }
