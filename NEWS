@@ -1,11 +1,18 @@
 
+CHANGES IN VERSION 1.8.3 [2018-12-18]
+-----------------------------------
+
+BUG FIXES
+
+    o Fixed bug in atoms() where 'index_offset' and 'index_extent'
+        would overflow when creating long 'matter_vec' objects
+
 CHANGES IN VERSION 1.8.2 [2018-12-13]
 -----------------------------------
 
 BUG FIXES
 
     o Fixed large file offset bug on Windows (again)
-
 
 CHANGES IN VERSION 1.8.1 [2018-12-11]
 -----------------------------------
